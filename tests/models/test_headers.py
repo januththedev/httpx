@@ -206,6 +206,25 @@ def test_obfuscate_sensitive_headers(headers, output):
                 {"url": "http://.../back.jpeg"},
             ],
         ),
+        # Link parameter values may be quoted-strings, which may contain "=".
+        # eg. Subresource Integrity hashes, or "title" values.
+        (
+            '<http:/.../front.jpeg>; title="a=b"; type="image/jpeg"',
+            [{"url": "http:/.../front.jpeg", "title": "a=b", "type": "image/jpeg"}],
+        ),
+        (
+            '<http:/.../front.jpeg>; rel="preload";'
+            ' integrity="sha384-oG1YzGkFcbHPAFW6Kj6Z/GJhwvzKz0jJ6/L3Y5UxFjX0=";'
+            " crossorigin=anonymous",
+            [
+                {
+                    "url": "http:/.../front.jpeg",
+                    "rel": "preload",
+                    "integrity": "sha384-oG1YzGkFcbHPAFW6Kj6Z/GJhwvzKz0jJ6/L3Y5UxFjX0=",
+                    "crossorigin": "anonymous",
+                }
+            ],
+        ),
         ("", []),
     ),
 )
